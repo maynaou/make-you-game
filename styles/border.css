@@ -1,0 +1,29 @@
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #000; 
+    overflow: hidden; 
+}
+
+#border-container {
+    position: relative;
+    width: 80rem; 
+    height: 40rem; 
+    background-color: #444;
+    border: 5px solid #1a0a0a; 
+    box-shadow: 0 0 15px rgba(248, 243, 243, 0.7); 
+    background-image: url('nasa.png'); 
+    background-size: cover; 
+    background-position: center;
+}
+
+.paddle {
+    border-radius: 5px; 
+}
+
+.ball {
+    position: absolute; 
+}
