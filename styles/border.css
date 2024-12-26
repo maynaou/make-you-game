@@ -13,7 +13,7 @@ body {
     width: 80rem; 
     height: 40rem; 
     background-color: #444;
-    border: 5px solid #1a0a0a; 
+    border: 15px solid #1a0a0a; 
     box-shadow: 0 0 15px rgba(248, 243, 243, 0.7); 
     background-image: url('nasa.png'); 
     background-size: cover; 
@@ -21,9 +21,13 @@ body {
 }
 
 .paddle {
-    border-radius: 5px; 
+    border-radius: 4px; 
 }
 
 .ball {
     position: absolute; 
+}
+
+.brick {
+    border-radius: 10px;
 }
