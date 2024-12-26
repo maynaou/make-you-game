@@ -77,7 +77,7 @@ class Ball {
         this.x += this.dx;
         this.y += this.dy;
         this.element.style.left = `${this.x}px`;
-        this.element.style.bottom = `${this.y}px`;
+        this.element.style.bottom= `${this.y}px`;
     }
 
     bounceHorizontal() {
@@ -114,14 +114,14 @@ class Ball {
     }
 }
 const paddle = new Paddle(0, 0, 15, "white");
-const ball = new Ball(paddle.x + (paddle.element.offsetWidth / 2) - 10, paddle.element.offsetHeight + 2.5, 2, "red", loselife);
+const ball = new Ball(paddle.x + (paddle.element.offsetWidth / 2) - 10, paddle.element.offsetHeight + 2.5, 3, "red", loselife);
 
 const brickMatrix = [
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,1,1,1,0,0,0,0,0,0],
+    [0,0,0,0,0,1,1,1,1,1,1,1,0,0,0],
 ];
 
 const bricks = []
@@ -151,10 +151,12 @@ class Brick {
         this.element.style.display = this.visible ? 'block' : 'none';
     }
 
+
     checkCollision(ball) {
         if (this.visible) {
-            if (ball.x - ball.radius * 2 > this.x && ball.x < this.x + this.width &&
-                ball.y - ball.radius * 2 > this.y && ball.y < this.y + this.height) {
+            if (
+                ball.x > this.x && ball.x < this.x + this.width && ball.y - ball.radius*3 > this.y && this.y + this.height  > ball.y - ball.radius*3
+            ) {
                 this.visible = false; 
                 ball.bouceVertical();
             }
@@ -209,6 +211,7 @@ function loselife() {
     lives--
     if (lives <= 0) {
         alert("Game Over!")
+        lives = 3
         return
     }
 }
