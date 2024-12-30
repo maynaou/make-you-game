@@ -13,7 +13,7 @@ body {
     width: 80rem; 
     height: 40rem; 
     background-color: #444;
-    border: 15px solid #1a0a0a; 
+    border: 2px solid #1a0a0a; 
     box-shadow: 0 0 15px rgba(248, 243, 243, 0.7); 
     background-image: url('nasa.png'); 
     background-size: cover; 
@@ -31,3 +31,17 @@ body {
 .brick {
     border-radius: 10px;
 }
+
+/* #pause-menu {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+} */
+
