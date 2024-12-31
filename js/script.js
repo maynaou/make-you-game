@@ -112,7 +112,13 @@ class Ball {
             this.y + this.radius * 2 >= paddle.offsetTop &&
             this.y <= paddle.offsetTop + paddle.offsetHeight
         ) {
+            this.y = paddle.offsetTop - this.radius * 2;
             this.bouceVertical();
+            const paddleCenter = paddle.offsetLeft + paddle.offsetWidth / 2;
+            const hitPosition = (this.x + this.radius) - paddleCenter;
+            const normalizedHit = hitPosition / (paddle.offsetWidth / 2);
+            this.dx = normalizedHit * this.speed;
+            console.log(hitPosition, normalizedHit, paddleCenter)
         }
     }
 
@@ -124,59 +130,126 @@ class Ball {
 
 }
 
+class ScoreBoard {
+    constructor(Time, score, lives,timerInterval) {
+        this.Time = Time;
+        this.score = score;
+        this.lives = lives;
+        this.timerInterval = timerInterval;
+        this.element = document.createElement('div');
+        this.element.id = 'scoreboard';
+        this.element.style.display = 'flex'; 
+        this.element.style.justifyContent = 'space-around';
+        this.element.style.alignItems = 'center';
+        this.element.style.backgroundColor = '#333';
+        this.element.style.color = 'white';
+        this.element.style.padding = '10px';
+        this.element.style.fontSize = '20px';
+        this.element1 = document.createElement('div');
+        this.element1.id = 'timer';
+        this.element1.textContent = Time;
+        this.element2 = document.createElement('div');
+        this.element2.id = 'score';
+        this.element2.textContent = `Score: ${score}`;
+        this.element3 = document.createElement('div');
+        this.element3.id = 'lives';
+        this.element3.textContent = `Lives: ${lives}`;
+        this.element.appendChild(this.element1);
+        this.element.appendChild(this.element2);
+        this.element.appendChild(this.element3);
+        document.body.appendChild(this.element);
+    }
+    
+    startTimer() {
+        this.timerInterval = setInterval(() => {
+            if (this.Time > 0) {
+                this.Time--;
+                const minutes = Math.floor(this.Time / 60);
+                const seconds = this.Time % 60;
+                document.getElementById('timer').textContent =`${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`; 
+            }else {
+                clearInterval(timerInterval);
+                alert("Le temps est écoulé!");
+            }
+        },1000)
+    }
+
+    updateScore() {
+        this.element2.textContent = `Score: ${score}`;
+    }
+
+    updateLives() {
+        this.element3.textContent = `Lives: ${lives}`; 
+    }
+}
+
+let timerInterval;
+
+let lives = 3
+
+let scoreboard = new ScoreBoard(60, 0,lives,timerInterval);
+
 class MenuPause {
-    constructor(color) {
+    constructor(color, isSpacePressed) {
         this.color = color;
+        this.isSpacePressed = isSpacePressed;
         this.element = document.createElement('div');
         this.element.id = 'pause-menu';
         this.element.style.display = 'none';
         this.element.style.position = 'absolute';
         this.element.style.top = '50%';
         this.element.style.left = '50%';
-        this.element.style.transform = 'translate(-50%, -50%)';  
+        this.element.style.transform = 'translate(-127%, -50%)';
         this.element.style.background = 'rgba(0, 0, 0, 0.8)';
         this.element.style.color = color;
         this.element.style.padding = '20px';
         this.element.style.borderRadius = '10px';
         this.element.style.textAlign = 'center';
         this.createButtons();
-        document.body.appendChild(this.element); 
+        document.body.appendChild(this.element);
     }
 
-    createButtons() { 
+    createButtons() {
         const continueButton = document.createElement('button');
         continueButton.innerText = 'Continue';
-        continueButton.addEventListener('click', () => this.continueGame());
+        continueButton.addEventListener('click', () => {
+            this.continueGame();
+            this.isSpacePressed = true;
+        });
+
         this.element.appendChild(continueButton);
         const restartButton = document.createElement('button');
         restartButton.innerText = 'Restart';
-        restartButton.addEventListener('click', () => this.restartGame());
+        restartButton.addEventListener('click', () => {
+            this.restartGame();
+            this.isSpacePressed = true;
+        });
         this.element.appendChild(restartButton);
     }
 
     toggleDisplay() {
         this.element.style.display = this.element.style.display === 'none' ? 'block' : 'none';
     }
- 
-    continueGame() {  
+
+    continueGame() {
         togglePause();
     }
 
     restartGame() {
-        location.reload(); 
+        location.reload();
     }
 }
 
-const menuPause = new MenuPause('white');
-const paddle = new Paddle(15, "white");
-const ball = new Ball(paddle.x + (paddle.element.offsetWidth / 2) - 10, paddle.y - 20, 3, "red", loselife);
+const menuPause = new MenuPause('white', true);
+const paddle = new Paddle(30, "white");
+const ball = new Ball(paddle.x + (paddle.element.offsetWidth / 2) - 10, paddle.y - 20, 5, "red", loselife);
 
 const brickMatrix = [
-    [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
-    [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
 ];
 
 const bricks = []
@@ -192,7 +265,7 @@ class Brick {
         this.visible = true;
         this.element = document.createElement('div');
         this.element.className = 'brick'
-        this.element.style.position = 'absolute';
+        this.element.style.position = 'absolute ';
         this.element.style.width = `${width}px`;
         this.element.style.height = `${height}px`;
         this.element.style.backgroundColor = color;
@@ -219,10 +292,10 @@ class Brick {
             const brickBottom = this.y + this.height;
 
             if (
-                ballRight > brickLeft &&
-                ballLeft < brickRight &&
-                ballBottom > brickTop &&
-                ballTop < brickBottom
+                ballRight >= brickLeft &&
+                ballLeft <= brickRight &&
+                ballBottom >= brickTop &&
+                ballTop <= brickBottom
             ) {
                 const overlapLeft = ballRight - brickLeft;
                 const overlapRight = brickRight - ballLeft;
@@ -236,10 +309,14 @@ class Brick {
                     ball.bouceVertical()
                 }
                 this.visible = false;
+                score +=10 
+                scoreboard.updateScore()
             }
         }
     }
 }
+
+let score = 0
 
 
 const brickWidth = 80.3;
@@ -265,19 +342,21 @@ createBricksFromMatrix(brickMatrix);
 let isPaused = false;
 
 function gameLoop() {
-        if (!isPaused) {
-            ball.move();
-            ball.check(document.getElementById('border-container'));
-            if (bricks.every(brick => !brick.visible)) {
-                alert("Congratulations! You cleared all the bricks!");
-                return;
-            }
-            bricks.forEach(brick => {
-                brick.checkCollision(ball)
-                brick.draw()
-            })
-            requestAnimationFrame(gameLoop);
-     }
+    if (!isPaused) {
+        ball.move();
+        ball.check(document.getElementById('border-container'));
+        if (bricks.every(brick => !brick.visible)) {
+            alert("Congratulations! You cleared all the bricks!");
+            ball.resetPosition()
+            menuPause.restartGame()
+            return;
+        }
+        bricks.forEach(brick => {
+            brick.checkCollision(ball)
+            brick.draw()
+        })
+        requestAnimationFrame(gameLoop);
+    }
 }
 
 gameLoop();
@@ -286,7 +365,7 @@ gameLoop();
 
 function togglePause() {
     isPaused = !isPaused;
-    menuPause.toggleDisplay(); 
+    menuPause.toggleDisplay();
     if (isPaused) {
         cancelAnimationFrame(gameLoop);
     } else {
@@ -294,23 +373,38 @@ function togglePause() {
     }
 }
 
+
+
 document.addEventListener('keydown', (event) => {
     if (event.key === ' ') {
         togglePause()
-    } else if (event.key === 'ArrowLeft') {
-        paddle.moveLeft();
-    } else if (event.key === 'ArrowRight') {
-        paddle.moveRight();
+        menuPause.isSpacePressed = !menuPause.isSpacePressed
     }
+
+    if (menuPause.isSpacePressed) {
+        if (event.key === 'ArrowLeft') {
+            paddle.moveLeft();
+        } else if (event.key === 'ArrowRight') {
+            paddle.moveRight();
+        }
+    }
+
 });
 
-let lives = 3
+
 
 function loselife() {
     lives--
+    scoreboard.updateLives()
     if (lives <= 0) {
         alert("Game Over!")
-        lives = 3
-        return
+        menuPause.restartGame()
+        clearInterval(timerInterval)
     }
 }
+
+function initGame() {
+    scoreboard.startTimer();
+}
+
+initGame()
