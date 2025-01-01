@@ -1,13 +1,8 @@
 class Paddle {
-    constructor(speed, color) {
+    constructor(speed) {
         this.speed = speed;
-        this.color = color;
         this.element = document.createElement('div');
         this.element.className = 'paddle';
-        this.element.style.width = '130px';
-        this.element.style.height = '20px';
-        // this.element.style.backgroundColor = color;
-        this.element.style.position = 'absolute';
         document.getElementById('border-container').appendChild(this.element);
         this.center();
     }
@@ -48,22 +43,16 @@ class Paddle {
 }
 
 class Ball {
-    constructor(x, y, speed, color, loselife) {
+    constructor(x, y, speed, loselife) {
         this.x = x;
         this.y = y;
         this.speed = speed;
         this.dx = speed;
         this.dy = -speed;
         this.radius = 12;
-        this.color = color;
         this.loselife = loselife;
         this.element = document.createElement('div');
-        this.element.className = 'ball';
-        this.element.style.width = `${this.radius * 2}px`;
-        this.element.style.height = `${this.radius * 2}px`;
-        this.element.style.backgroundColor = color;
-        this.element.style.borderRadius = '50%';
-        this.element.style.position = 'absolute';
+        this.element.className = 'ball'; 
         document.getElementById('border-container').appendChild(this.element);
         this.move()
     }
@@ -135,15 +124,8 @@ class ScoreBoard {
         this.timerInterval = timerInterval;
         this.element = document.createElement('div');
         this.element.id = 'scoreboard';
-        this.element.style.display = 'flex';
-        this.element.style.justifyContent = 'space-around';
-        this.element.style.alignItems = 'center';
-        this.element.style.backgroundColor = '#333';
-        this.element.style.color = 'white';
-        this.element.style.padding = '10px';
-        this.element.style.fontSize = '20px';
         this.element1 = document.createElement('div');
-        this.element1.id = 'timer';
+        this.element1.id = 'timer'; 
         this.element2 = document.createElement('div');
         this.element2.id = 'score';
         this.element2.textContent = `Score: ${score}`;
@@ -180,25 +162,15 @@ let timerInterval;
 
 let lives = 3
 
+
 let scoreboard = new ScoreBoard(0, 0, lives, timerInterval);
 
 class MenuPause {
-    constructor(color, isSpacePressed) {
-        this.color = color;
+    constructor(isSpacePressed) {
         this.isSpacePressed = isSpacePressed;
         this.element = document.createElement('div');
         this.element.id = 'pause-menu';
         this.element.style.display = 'none';
-        this.element.style.position = 'absolute';
-        this.element.style.top = '50%';
-        this.element.style.left = '50%';
-        this.element.style.transform = 'translate(-50%, -50%)';
-        this.element.style.background = 'rgba(0, 0, 0, 0.8)';
-        this.element.style.color = color;
-        this.element.style.padding = '20px';
-        this.element.style.borderRadius = '10px';
-        this.element.style.textAlign = 'center';
-        this.element.style.zIndex = 1;
         this.createButtons();
         document.getElementById('border-container').appendChild(this.element);
     }
@@ -234,9 +206,9 @@ class MenuPause {
     }
 }
 
-const menuPause = new MenuPause('white', true);
-const paddle = new Paddle(30, "#ffcc00");
-const ball = new Ball(paddle.x + (paddle.element.offsetWidth / 2) - 10, paddle.y - 20, 7, '#ff0000', loselife);
+const menuPause = new MenuPause(true);
+const paddle = new Paddle(30);
+const ball = new Ball(paddle.x + (paddle.element.offsetWidth / 2) - 10, paddle.y - 20, 7, loselife);
 
 const brickMatrix = [
     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
@@ -301,6 +273,7 @@ class Brick {
                 ballBottom >= brickTop &&
                 ballTop <= brickBottom
             ) {
+  
                 const overlapLeft = ballRight - brickLeft;
                 const overlapRight = brickRight - ballLeft;
                 const overlapTop = ballBottom - brickTop;
@@ -357,7 +330,10 @@ createBricksFromMatrix(brickMatrix);
 
 let isPaused = false;
 
+
+
 function gameLoop() {
+
     if (!isPaused) {
         ball.move();
         ball.check(document.getElementById('border-container'));
@@ -376,6 +352,8 @@ function gameLoop() {
 }
 
 gameLoop();
+
+
 
 
 
@@ -423,4 +401,4 @@ function initGame() {
     scoreboard.startTimer();
 }
 
-initGame()
+initGame()  

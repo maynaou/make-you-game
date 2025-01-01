@@ -22,17 +22,48 @@ body {
 }
 
 .paddle {
+    width: 130px; 
+    height: 20px;
+    position: absolute;
     border-radius: 4px;  
     background: linear-gradient(90deg, #c0bcbc, #adacac); 
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    transform: translateX(-10%);
+    transition: background 0.3s;
+}
+
+.paddle:hover {
+    background: linear-gradient(90deg, #adacac, #c0bcbc); 
 }
 
 .ball {
+    width: 24px; 
+    height: 24px;
+    background-color: #ff0000;
+    border-radius: 50%;
     position: absolute; 
     background: radial-gradient(circle, #dddfd4, #0c0c0b); 
     border: 2px solid #363434;
     box-shadow: 0 0 10px rgba(19, 17, 17, 0.5);
+    transition: background-color 0.3s;
+}
+
+#scoreboard {
+    display: flex; 
+    justify-content: space-around;
+    align-items: center;
+    background-color: #333;
+    color: white; 
+    padding: 10px; 
+    font-size: 20px; 
+    position: fixed; 
+    top: 0; 
+    width: 100%; 
+    z-index: 1000; 
+}
+
+#timer, #score, #lives {
+    flex: 1; 
+    text-align: center; 
 }
 
 .brick {
@@ -40,9 +71,7 @@ body {
     box-shadow: 0 4px 10px  rgba(0, 0, 0, 0.5);
 }
 
-#timer, #score, #lives {
-    margin: 0 15px;
-}
+
  
 .brick:hover {
     transform: scale(1.05); 
@@ -51,5 +80,41 @@ body {
 .brick:active {
     transform: scale(0.95); 
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+#pause-menu {
+    position: absolute; 
+    top: 50%;
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    background: rgba(117, 105, 105, 0.85); 
+    color: #ffffff; 
+    padding: 30px; 
+    border-radius: 15px; 
+    text-align: center;
+    z-index: 100; 
+    font-size: 24px;
+    font-family: 'Arial', sans-serif; 
+}
+
+#pause-menu button {
+    background: linear-gradient(90deg, #88816b, #0a0a09);  
+    color: #faf2f2; 
+    border: none;
+    border-radius: 8px; 
+    padding: 10px 20px;
+    margin: 10px; 
+    cursor: pointer; 
+    transition: transform 0.2s, background 0.2s; 
+    font-size: 18px; 
+}   
+
+#pause-menu button:hover {
+    background: linear-gradient(90deg, #111110, #ecebe5);
+    transform: scale(1.05);
+}
+
+#pause-menu button:active {
+    transform: scale(0.95); 
 }
 
