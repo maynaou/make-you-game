@@ -89,7 +89,9 @@ class Ball {
 
         if (this.y > containerHeight - this.radius * 2) {
             this.loselife();
-            this.resetPosition();
+            if (lives > 0) {
+                this.resetPosition();
+            }
         }
 
         const paddle = document.querySelector('.paddle');
@@ -126,6 +128,7 @@ class ScoreBoard {
         this.element.id = 'scoreboard';
         this.element1 = document.createElement('div');
         this.element1.id = 'timer'; 
+        this.updateTimer();
         this.element2 = document.createElement('div');
         this.element2.id = 'score';
         this.element2.textContent = `Score: ${score}`;
@@ -138,13 +141,17 @@ class ScoreBoard {
         document.body.appendChild(this.element);
     }
 
+    updateTimer() {
+        const minutes = Math.floor(this.Time / 60);
+        const seconds = this.Time % 60;
+        this.element1.textContent =  `Times: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
     startTimer() {
         this.timerInterval = setInterval(() => {
             if (!isPaused) {
                 this.Time++;
-                const minutes = Math.floor(this.Time / 60);
-                const seconds = this.Time % 60;
-                document.getElementById('timer').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                this.updateTimer();
             }
         }, 1000)
     }
@@ -330,10 +337,7 @@ createBricksFromMatrix(brickMatrix);
 
 let isPaused = false;
 
-
-
 function gameLoop() {
-
     if (!isPaused) {
         ball.move();
         ball.check(document.getElementById('border-container'));
@@ -353,10 +357,6 @@ function gameLoop() {
 
 gameLoop();
 
-
-
-
-
 function togglePause() {
     isPaused = !isPaused;
     menuPause.toggleDisplay();
@@ -374,7 +374,6 @@ document.addEventListener('keydown', (event) => {
         togglePause()
         menuPause.isSpacePressed = !menuPause.isSpacePressed
     }
-
     if (menuPause.isSpacePressed) {
         if (event.key === 'ArrowLeft') {
             paddle.moveLeft();
@@ -385,15 +384,15 @@ document.addEventListener('keydown', (event) => {
 
 });
 
-
-
 function loselife() {
     lives--
     scoreboard.updateLives()
     if (lives <= 0) {
-        alert("Game Over!")
-        menuPause.restartGame()
         clearInterval(timerInterval)
+        setTimeout(() => {
+            alert("Game Over!"); 
+        }, 0.01);
+        menuPause.restartGame(); 
     }
 }
 
