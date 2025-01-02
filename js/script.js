@@ -1,3 +1,4 @@
+let start = true
 class Paddle {
     constructor(speed) {
         this.speed = speed;
@@ -46,13 +47,14 @@ class Ball {
     constructor(x, y, speed, loselife) {
         this.x = x;
         this.y = y;
+        this.hasMoved = false;
         this.speed = speed;
         this.dx = speed;
         this.dy = -speed;
-        this.radius = 12;
+        this.radius = 10;
         this.loselife = loselife;
         this.element = document.createElement('div');
-        this.element.className = 'ball'; 
+        this.element.className = 'ball';
         document.getElementById('border-container').appendChild(this.element);
         this.move()
     }
@@ -63,9 +65,13 @@ class Ball {
     }
 
     move() {
+        if (!this.hasMoved) {
+            this.hasMoved = true;
+        }
+
         this.x += this.dx;
         this.y += this.dy;
-        this.updatePosition()
+        this.updatePosition();
     }
 
     bounceHorizontal() {
@@ -106,7 +112,7 @@ class Ball {
             const paddleCenter = paddle.offsetLeft + paddle.offsetWidth / 2;
             const hitPosition = (this.x + this.radius) - paddleCenter;
             const normalizedHit = hitPosition / (paddle.offsetWidth / 2);
-            this.dx = normalizedHit * this.speed;  
+            this.dx = normalizedHit * this.speed;
         }
     }
 
@@ -119,15 +125,14 @@ class Ball {
 }
 
 class ScoreBoard {
-    constructor(Time, score, lives, timerInterval) {
+    constructor(Time, score, lives) {
         this.Time = Time;
         this.score = score;
         this.lives = lives;
-        this.timerInterval = timerInterval;
         this.element = document.createElement('div');
         this.element.id = 'scoreboard';
         this.element1 = document.createElement('div');
-        this.element1.id = 'timer'; 
+        this.element1.id = 'timer';
         this.updateTimer();
         this.element2 = document.createElement('div');
         this.element2.id = 'score';
@@ -144,16 +149,16 @@ class ScoreBoard {
     updateTimer() {
         const minutes = Math.floor(this.Time / 60);
         const seconds = this.Time % 60;
-        this.element1.textContent =  `Times: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        this.element1.textContent = `Times: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }
 
     startTimer() {
-        this.timerInterval = setInterval(() => {
+        setInterval(() => {
             if (!isPaused) {
                 this.Time++;
                 this.updateTimer();
             }
-        }, 1000)
+        }, 1000);
     }
 
     updateScore() {
@@ -165,12 +170,11 @@ class ScoreBoard {
     }
 }
 
-let timerInterval;
-
 let lives = 3
 
+let scoreboard
 
-let scoreboard = new ScoreBoard(0, 0, lives, timerInterval);
+let menuPause
 
 class MenuPause {
     constructor(isSpacePressed) {
@@ -187,7 +191,6 @@ class MenuPause {
         continueButton.innerText = 'Continue';
         continueButton.addEventListener('click', () => {
             this.continueGame();
-            this.isSpacePressed = true;
         });
 
         this.element.appendChild(continueButton);
@@ -212,8 +215,7 @@ class MenuPause {
         location.reload();
     }
 }
-
-const menuPause = new MenuPause(true);
+ 
 const paddle = new Paddle(30);
 const ball = new Ball(paddle.x + (paddle.element.offsetWidth / 2) - 10, paddle.y - 20, 7, loselife);
 
@@ -280,7 +282,7 @@ class Brick {
                 ballBottom >= brickTop &&
                 ballTop <= brickBottom
             ) {
-  
+
                 const overlapLeft = ballRight - brickLeft;
                 const overlapRight = brickRight - ballLeft;
                 const overlapTop = ballBottom - brickTop;
@@ -303,30 +305,30 @@ class Brick {
 let score = 0
 
 
-const brickWidth = 84.27 ;
+const brickWidth = 84.27;
 const brickHeight = 50;
-const spacing = 5  ;
+const spacing = 5;
 const COLOR_MAP = {
-    1: "255, 255, 255", 
-    2: "255, 165, 0", 
-    3: "0, 191, 255",   
-    4: "50, 205, 50",  
-    5: "255, 0, 0",   
-    6: "30, 144, 255",  
-    7: "255, 20, 147", 
-    8: "255, 215, 0",  
-    9: "169, 169, 169",  
-    10: "255, 255, 0"  
+    1: "255, 255, 255",
+    2: "255, 165, 0",
+    3: "0, 191, 255",
+    4: "50, 205, 50",
+    5: "255, 0, 0",
+    6: "30, 144, 255",
+    7: "255, 20, 147",
+    8: "255, 215, 0",
+    9: "169, 169, 169",
+    10: "255, 255, 0"
 };
 
 function createBricksFromMatrix(matrix) {
-    for (let row = 0 ; row < matrix.length; row++) {
+    for (let row = 0; row < matrix.length; row++) {
         for (let col = 0; col < matrix[row].length; col++) {
             const brickValue = matrix[row][col]
             if (brickValue > 0) {
                 const x = col * (brickWidth + spacing) + 2;
                 const y = row * (brickHeight + spacing);
-                const brick = new Brick(x, y, brickWidth, brickHeight,`rgb(${COLOR_MAP[brickValue]})`)
+                const brick = new Brick(x, y, brickWidth, brickHeight, `rgb(${COLOR_MAP[brickValue]})`)
                 bricks.push(brick)
             }
         }
@@ -355,7 +357,6 @@ function gameLoop() {
     }
 }
 
-gameLoop();
 
 function togglePause() {
     isPaused = !isPaused;
@@ -384,20 +385,32 @@ document.addEventListener('keydown', (event) => {
 
 });
 
+let b = true
+
 function loselife() {
     lives--
     scoreboard.updateLives()
     if (lives <= 0) {
-        clearInterval(timerInterval)
         setTimeout(() => {
-            alert("Game Over!"); 
-        }, 0.01);
-        menuPause.restartGame(); 
+            if (b) {
+                alert("Game Over!");
+                b = false
+                return
+            }
+        }, 10);
+        if (!b) {
+            menuPause.restartGame();
+            b = true
+        }
     }
 }
 
-function initGame() {
-    scoreboard.startTimer();
-}
 
-initGame()  
+
+document.getElementById('start-button').addEventListener('click', () => {
+    document.getElementById('start-container').style.display = 'none';
+    menuPause = new MenuPause(true);
+    scoreboard = new ScoreBoard(0, 0, lives);
+    scoreboard.startTimer(); 
+    gameLoop();
+});
